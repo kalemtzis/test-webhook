@@ -1,0 +1,70 @@
+// This is your Prisma schema file,
+// learn more about it in the docs: https://pris.ly/d/prisma-schema
+
+// Looking for ways to speed up your queries, or scale easily with your serverless or edge functions?
+// Try Prisma Accelerate: https://pris.ly/cli/accelerate-init
+
+generator client {
+  provider = "prisma-client-js"
+  output   = "../app/generated/prisma"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+model User {
+  id          String        @id @default(cuid())
+  userId      String        @unique
+  email       String?       @unique
+  username    String?       @unique
+  firstName   String?
+  lastName    String?
+  photo       String?
+  count       Int           @default(0)
+  credits     Int           @default(0)
+  createdAt   DateTime      @default(now())
+  updatedAt   DateTime      @default(now()) @updatedAt
+  Image       Image[]
+  Transaction Transaction[]
+}
+
+model Tools {
+  id        String   @id @default(cuid())
+  title     String   @unique
+  category  String
+  price     Float
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+}
+
+model Image {
+  id                 Int      @id @default(autoincrement())
+  title              String
+  transformationType String
+  publicId           String
+  secureUrl          String
+  width              Int?
+  height             Int?
+  config             Json?
+  transformationUrl  String?
+  aspectRatio        String?
+  color              String?
+  prompt             String?
+  author             User?    @relation(fields: [authorId], references: [userId])
+  authorId           String?
+  createdAt          DateTime @default(now())
+  updatedAt          DateTime @default(now()) @updatedAt
+}
+
+model Transaction {
+  id        String   @id @default(cuid())
+  createdAt DateTime @default(now())
+  stripeId  String   @unique
+  amount    Int
+  plan      String?
+  credits   Int?
+  buyerId   String?
+  buyer     User?    @relation(fields: [buyerId], references: [userId])
+}
