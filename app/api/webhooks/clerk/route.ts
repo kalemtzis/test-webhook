@@ -41,6 +41,7 @@ export const POST = async (req: NextRequest) => {
 
     return new Response('Webhook received', { status: 200 })
   } catch (error) {
-    
+    console.error('Error verifying webhook:', error)
+    return new Response('Error verifying webhook', { status: 400 })
   }
 }
